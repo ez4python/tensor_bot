@@ -48,11 +48,13 @@ def normalize_phone_number_list(input_str: str | None) -> str | None:
             return None
         elif digits.startswith("77") and len(digits) != 11:
             return None
-
-        normalized = "+" + digits
+        if len(digits) ==0:
+            return None
+        else:
+            normalized = "+" + digits
         normalized_numbers.append(normalized)
 
     return ",".join(normalized_numbers) if normalized_numbers else None
 
 
-                       # None
+

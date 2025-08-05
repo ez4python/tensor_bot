@@ -54,7 +54,7 @@ def find_truck_type(user_input: str) -> list[str]:
         else:
             truck.append(part.strip())  # Aniqlanmagan holatda o'zini qaytaramiz
 
-    res=clean_and_capitalize(",".join(truck))
+    res=clean_and_capitalize(truck[0])
     return res
 
 

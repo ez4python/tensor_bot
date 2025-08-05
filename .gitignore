@@ -7,3 +7,4 @@ additionaldata.txt
 .idea
 *.spacy
 apps/__pycache__
+bot/user*

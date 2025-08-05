@@ -11,7 +11,7 @@ from apps.separateblock import smart_split_blocks
 def chek_data(text):
 
 
-    if text.get('from') and text.get('to'):
+    if text.get('from') and text.get('to') and text.get('sellerPhoneNumber'):
 
         from_country = text['from'].split(',')
         to_country = text['to'].split(',')
@@ -29,17 +29,23 @@ def chek_data(text):
 
 
 def cargo_name_normalize(text):
-    if text:
-        text=text.split(",")
-        res=[]
-        for i in text:
-            if i!="АЛОКА УЧУН":
-                res.append(i)
-        res=",".join(res)
-        res=clean_and_capitalize(res)
-        return res
-    else :
+    if not text:
         return None
+
+    text_list = text.split(",")
+    cleaned = []
+
+    for item in text_list:
+        item = item.strip()
+        if item and item.upper() != "АЛОКА УЧУН":
+            cleaned_item = clean_and_capitalize(item)
+            cleaned.append(cleaned_item)
+
+    # Dublikatlarni tartibni saqlagan holda olib tashlash
+    unique_cleaned = list(dict.fromkeys(cleaned))
+
+    return ", ".join(unique_cleaned)
+
 
 def process_block(block, user, msg_id, username):
     blok_data = get_message(block)
@@ -55,7 +61,7 @@ def process_block(block, user, msg_id, username):
     blok_data["toLatin"] = change_language(blok_data["to"])
     blok_data["sellerPhoneNumber"] = normalize_phone_number_list(blok_data["sellerPhoneNumber"])
     blok_data["tg_username"] = username # f"https://t.me/{username}"
-    # blok_data["cargoName"]=cargo_name_normalize(blok_data["cargoName"])
+    blok_data["cargoName"]=cargo_name_normalize(blok_data["cargoName"])
     blok_data["cargoNameLatin"] = change_language(blok_data["cargoName"])
 
     if blok_data.get("vehicleType"):
@@ -82,7 +88,7 @@ def ordered_message(text, user, msg_id, username):
             res["to"] = find_region_type(res["to"])
             res["fromLatin"] = change_language(res["from"])
             res["toLatin"] = change_language(res["to"])
-            # res["cargoName"] = cargo_name_normalize(res["cargoName"])
+            res["cargoName"] = cargo_name_normalize(res["cargoName"])
             res["cargoNameLatin"]=change_language(res["cargoName"])
             res["sellerPhoneNumber"] = normalize_phone_number_list(res["sellerPhoneNumber"])
             if res.get("vehicleType"):

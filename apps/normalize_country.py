@@ -31,7 +31,7 @@ def normalize(text: str) -> str:
     return text
 
 def remove_suffix(word: str) -> str:
-    suffixes = ['dan', 'ga', 'tan', 'ka', 'sha', 'gan']
+    suffixes = ['dan', 'ga', 'tan', 'ka', 'sha', 'gan','дан', 'га', 'тан', 'ка', 'ша', 'ган']
     for suffix in suffixes:
         if word.endswith(suffix) and len(word) > len(suffix) + 1:
             return word[: -len(suffix)]
@@ -43,6 +43,8 @@ def find_region_type(user_input: str) -> str:
 
     regions = user_input.split(',')
 
+    regions = regions[0].split(' ')
+
     for region in regions:
         region = region.strip()
 
@@ -53,10 +55,14 @@ def find_region_type(user_input: str) -> str:
             match, score, _ = process.extractOne(query, all_variants.keys(), scorer=fuzz.ratio)
 
             if score >= 80:
-                result.append(all_variants[match])
+                return all_variants[match]
             else:
-                result.append(region.strip())
+                result.append(region)
 
-    res = clean_and_capitalize(", ".join(result))
+    res=clean_and_capitalize(result[0])
+    # res = clean_and_capitalize(", ".join(result))
     return res
 
+# text="УЗБ ТОШКЕНТ,УЗБ ВОДИЙ"
+#
+# print(find_region_type(text))
