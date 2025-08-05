@@ -1,0 +1,9 @@
+model
+output
+segment_block
+test
+.env
+additionaldata.txt
+.idea
+*.spacy
+apps/__pycache__

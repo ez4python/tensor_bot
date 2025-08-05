@@ -1,0 +1,8 @@
+{
+  "labels":[
+    "SINGLE",
+    "MULTIPLE"
+  ],
+  "threshold":0.0,
+  "positive_label":null
+}
