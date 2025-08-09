@@ -1,7 +1,7 @@
 import spacy
 
 # Modelni faqat bir marta yuklaymiz
-nlp = spacy.load(r"C:\Users\User\PycharmProjects\Logistika\output_last\model-best")
+nlp = spacy.load(r"/media/tensor/Windows/Users/User/PycharmProjects/Logistika/output_last/model-best")
 
 def extract_first_number(text):
     """Matndan birinchi raqam ketma-ketligini ajratish (regexsiz)"""

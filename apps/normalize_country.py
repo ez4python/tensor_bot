@@ -5,7 +5,7 @@ from rapidfuzz import process, fuzz
 from apps.normalize_text import clean_and_capitalize
 
 # Fayldan shaharlar lug'atini o'qib olish
-with open(r"C:\Users\User\PycharmProjects\Logistika\apps\regions.json", "r", encoding="utf8") as f:
+with open(r"/media/tensor/Windows/Users/User/PycharmProjects/Logistika/apps/regions.json", "r", encoding="utf8") as f:
     city_to_region = json.load(f)
 
 # Barcha variantlarni normalize qilib, lug'atni tayyorlab qo'yamiz
@@ -37,6 +37,75 @@ def remove_suffix(word: str) -> str:
             return word[: -len(suffix)]
     return word
 
+def change_to_cyrillic(text):
+    def is_latin(text):
+        # Faqat lotin harflari (shu jumladan 'o‘', 'g‘') borligini tekshiradi
+        import re
+        return bool(re.match(r"^[A-Za-z0‘g‘G‘O‘O'G']+(.*)?$", text.replace(" ", "")))
+
+    if not is_latin(text):
+        return text  # Kirill bo‘lishi mumkin — tarjima qilinmaydi
+
+    # Lotindan Kirillga o‘tkazuvchi funksiya
+    latin_to_cyrillic = {
+        "A": "А", "a": "а",
+        "B": "Б", "b": "б",
+        "D": "Д", "d": "д",
+        "E": "Э", "e": "э",
+        "F": "Ф", "f": "ф",
+        "G": "Г", "g": "г",
+        "H": "Ҳ", "h": "ҳ",
+        "I": "И", "i": "и",
+        "J": "Ж", "j": "ж",
+        "K": "К", "k": "к",
+        "L": "Л", "l": "л",
+        "M": "М", "m": "м",
+        "N": "Н", "n": "н",
+        "O": "О", "o": "о",
+        "P": "П", "p": "п",
+        "Q": "Қ", "q": "қ",
+        "R": "Р", "r": "р",
+        "S": "С", "s": "с",
+        "T": "Т", "t": "т",
+        "U": "У", "u": "у",
+        "V": "В", "v": "в",
+        "X": "Х", "x": "х",
+        "Y": "Й", "y": "й",
+        "Z": "З", "z": "з",
+        "O‘": "Ў", "o‘": "ў", "O'": "Ў", "o'": "ў",
+        "G‘": "Ғ", "g‘": "ғ", "G'": "Ғ", "g'": "ғ",
+        "Sh": "Ш", "sh": "ш",
+        "Ch": "Ч", "ch": "ч",
+        "Ya": "Я", "ya": "я",
+        "Yo": "Ё", "yo": "ё",
+        "Yu": "Ю", "yu": "ю",
+        "Ts": "Ц", "ts": "ц",
+        "’": "ъ", "'": "ь",
+        ",": ",", ".": ".", "-": "-", " ": " "
+    }
+
+    # 2 harfli kombinatsiyalarni birinchi tarjima qilish
+    replacements = [
+        ("O‘", "Ў"), ("o‘", "ў"), ("O'", "Ў"), ("o'", "ў"),
+        ("G‘", "Ғ"), ("g‘", "ғ"), ("G'", "Ғ"), ("g'", "ғ"),
+        ("Sh", "Ш"), ("sh", "ш"),
+        ("Ch", "Ч"), ("ch", "ч"),
+        ("Ya", "Я"), ("ya", "я"),
+        ("Yo", "Ё"), ("yo", "ё"),
+        ("Yu", "Ю"), ("yu", "ю"),
+        ("Ts", "Ц"), ("ts", "ц"),
+    ]
+
+    for latin, cyrillic in replacements:
+        text = text.replace(latin, cyrillic)
+
+    # Qolgan belgilarni tarjima qilish
+    result = ""
+    for char in text:
+        result += latin_to_cyrillic.get(char, char)
+
+    return result
+
 # Topilgan shahar bo‘yicha standart regionni qaytaruvchi funksiya
 def find_region_type(user_input: str) -> str:
     result = []
@@ -57,6 +126,7 @@ def find_region_type(user_input: str) -> str:
             if score >= 80:
                 return all_variants[match]
             else:
+                region = change_to_cyrillic(region)
                 result.append(region)
 
     res=clean_and_capitalize(result[0])
@@ -65,4 +135,5 @@ def find_region_type(user_input: str) -> str:
 
 # text="УЗБ ТОШКЕНТ,УЗБ ВОДИЙ"
 #
-# print(find_region_type(text))
+# print(find_region_type(text))\
+

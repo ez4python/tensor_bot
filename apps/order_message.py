@@ -63,7 +63,7 @@ def process_block(block, user, msg_id, username):
     blok_data["tg_username"] = username # f"https://t.me/{username}"
     blok_data["cargoName"]=cargo_name_normalize(blok_data["cargoName"])
     blok_data["cargoNameLatin"] = change_language(blok_data["cargoName"])
-
+    blok_data['weight'] = normalize(blok_data["weight"])
     if blok_data.get("vehicleType"):
         blok_data["vehicleType"] = find_truck_type(blok_data["vehicleType"])
         blok_data["vehicleTypeLatin"] = change_language(blok_data["vehicleType"])
@@ -74,7 +74,7 @@ def process_block(block, user, msg_id, username):
 def ordered_message(text, user, msg_id, username):
     data_type = detector_block(text)
 
-    result = []
+    result =[]
 
     if data_type == "SINGLE":
         res = get_message(text)
@@ -91,6 +91,7 @@ def ordered_message(text, user, msg_id, username):
             res["cargoName"] = cargo_name_normalize(res["cargoName"])
             res["cargoNameLatin"]=change_language(res["cargoName"])
             res["sellerPhoneNumber"] = normalize_phone_number_list(res["sellerPhoneNumber"])
+            res['weight']=normalize(res["weight"])
             if res.get("vehicleType"):
                 res["vehicleType"] = find_truck_type(res["vehicleType"])
                 res["vehicleTypeLatin"] = change_language(res["vehicleType"])
@@ -101,7 +102,9 @@ def ordered_message(text, user, msg_id, username):
         blocks = smart_split_blocks(text)
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
+
             futures = [executor.submit(process_block, block, user, msg_id, username) for block in blocks]
+
             for future in concurrent.futures.as_completed(futures):
                 res = future.result()
                 if res:
@@ -109,6 +112,10 @@ def ordered_message(text, user, msg_id, username):
 
     return result
 
+
+def normalize(text):
+    text=text.split(',')
+    return text[0]
 
 def change_language(data):
     rus_to_latin = {
@@ -157,6 +164,9 @@ def change_language(data):
 
 
 
+
+
+
 # text="""
 #
 #
@@ -169,5 +179,5 @@ def change_language(data):
 # лубой авто 5машина"""
 #
 #
-# print(ordered_message(text, "javoxir", "999"))
+# print(ordered_message(text, "javoxir", "999","user"))
 

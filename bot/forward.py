@@ -88,18 +88,19 @@ async def process_message(event):
         results = [results]
 
     for result in results:
-        # try:
-        #     status, response = await post_to_api(result)
-        #     if status == 200:
-        #         print("✅ Yuborildi:", result.get("sellerPhoneNumber", "no-phone"))
-        #         print("Server:", response)
-        #     else:
-        #         print(f"❌ API Xatosi [{status}]: {response}")
-        # except Exception as e:
-        #     print("❌ API yuborishda xatolik:", e)
+        try:
+            status, response = await post_to_api(result)
+            if status == 200:
+                print("✅ Yuborildi:", result.get("sellerPhoneNumber", "no-phone"))
+                print("Server:", response)
+            else:
+                print(f"❌ API Xatosi [{status}]: {response}")
+        except Exception as e:
+            print("❌ API yuborishda xatolik:", e)
 
         # Matnni formatlash va guruhlarga yuborish
         result_text = "\n".join(f"{k}: {v}" for k, v in result.items())
+        # print(result_text)
         try:
             await asyncio.gather(
                 client.send_message(target_group, result_text),

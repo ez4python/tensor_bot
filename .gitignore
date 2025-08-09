@@ -3,6 +3,8 @@ output
 segment_block
 test
 .env
+.venv
+venv
 additionaldata.txt
 .idea
 *.spacy
