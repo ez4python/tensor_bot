@@ -58,3 +58,5 @@ def find_truck_type(user_input: str) -> list[str]:
     return res
 
 
+# text="Ref,Fura"
+# print(find_truck_type(text))

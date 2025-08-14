@@ -17,4 +17,8 @@ def clean_and_capitalize(text):
     return ', '.join(capitalized_parts)
 
 
+# text="salom, menming ismnm"
+#
+# print(clean_and_capitalize(text))
+
 

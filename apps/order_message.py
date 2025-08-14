@@ -30,7 +30,7 @@ def chek_data(text):
 
 def cargo_name_normalize(text):
     if not text:
-        return None
+        return ""
 
     text_list = text.split(",")
     cleaned = []
@@ -114,8 +114,13 @@ def ordered_message(text, user, msg_id, username):
 
 
 def normalize(text):
-    text=text.split(',')
-    return text[0]
+    if text is None:
+        return ""
+    elif "," in text:
+        text=text.split(',')
+        return text[0]
+    else:
+        return text
 
 def change_language(data):
     rus_to_latin = {
@@ -169,15 +174,16 @@ def change_language(data):
 
 # text="""
 #
+# 🇷🇺Екатеринбург - Ташкент🇺🇿
+# 🚛🚛🚛Реф
+# Кондитерка🍭🍬🍫
 #
-# 🇷🇺Орск,Tashkent
-# 🇹🇯Душанбе
-# груз битум
-# через хучанд
-# аванс эст
-# tent,ref
-# лубой авто 5машина"""
+# Цена:⚡️⚡️
+# +998993937871
+#
+# """
 #
 #
-# print(ordered_message(text, "javoxir", "999","user"))
+#
+# print(process_block(text, "javoxir", "999","user"))
 

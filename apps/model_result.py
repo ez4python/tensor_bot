@@ -58,14 +58,11 @@ def get_message(text):
 
     return result
 # text="""
-# 🌍СРОЧНО СРОЧНО СРОЧНО🌍
+# 🇷🇺Екатеринбург - Ташкент🇺🇿
+# 🚛🚛🚛Реф
+# Кондитерка🍭🍬🍫
 #
-# ИРКУТСК УСТЬ ИЛИМСК  ВОДИЙ Toshkent
-#
-# ГРУЗ ТАХТА
-#
-# АВАНС ЕСТЬ
-#
-#  ТЕНТ КЕРАК"""
+# Цена:⚡️⚡️
+# +998993937871"""
 #
 # print(get_message(text))
