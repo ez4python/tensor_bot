@@ -137,7 +137,7 @@ async def process_message(event):
             except Exception as e:
                 print("❌ Telegramga yuborishda xatolik:", e)
     else:
-        print("Takrorlangan xabar")
+        print("Takrorlangan xabar\n\n\n")
 
 
 
