@@ -6,7 +6,7 @@ import aiohttp
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 import os
-from apps.order_message import ordered_message
+from apps.order_message import ordered_message, chek_data
 import hashlib
 
 load_dotenv()
@@ -75,69 +75,75 @@ async def process_message(event):
 
     message = event.message
     msg_for_chek=str(message)
-    if process_message_time(msg_for_chek):
-
-        sender = await event.get_sender()
-        chat = await event.get_chat()
-        username = getattr(chat, 'username', None)
-
-        # https://t.me/c/<chat_id_without_-100>/<message_id>
-
-        message_url = f"https://t.me/{username}/{message.id}"
-
-        # Bot yoki bo‘sh xabar bo‘lsa → o'tkazib yubor
-        if isinstance(sender, types.User) and sender.bot:
-            return
-        if not message.message:
-            return
-
-        msg_text = message.message.strip()
 
 
+    sender = await event.get_sender()
+    chat = await event.get_chat()
+    username = getattr(chat, 'username', None)
+
+    # https://t.me/c/<chat_id_without_-100>/<message_id>
+
+    message_url = f"https://t.me/{username}/{message.id}"
+
+    # Bot yoki bo‘sh xabar bo‘lsa → o'tkazib yubor
+    if isinstance(sender, types.User) and sender.bot:
+        return
+    if not message.message:
+        return
+
+    msg_text = message.message.strip()
 
 
 
-        # Xabarni analiz qilish (sync kod — thread pool ichida)
+
+
+    # Xabarni analiz qilish (sync kod — thread pool ichida)
+    try:
+        results = await asyncio.get_running_loop().run_in_executor(
+            executor, ordered_message, msg_text, sender.first_name, message_url, sender.id
+        )
+    except Exception as e:
+        print("⚠️ ordered_message ishlovida xatolik:", e,msg_text)
+
+        return
+
+    if not results:
+        return
+    if not isinstance(results, list):
+        results = [results]
+
+    for result in results:
         try:
-            results = await asyncio.get_running_loop().run_in_executor(
-                executor, ordered_message, msg_text, sender.first_name, message_url, sender.id
-            )
-        except Exception as e:
-            print("⚠️ ordered_message ishlovida xatolik:", e,msg_text)
-
-            return
-
-        if not results:
-            return
-        if not isinstance(results, list):
-            results = [results]
-
-        for result in results:
-            try:
-                status, response = await post_to_api(result)
-                if status == 200:
-                    print("✅ Yuborildi:", result.get("sellerPhoneNumber", "no-phone"))
-                    print("Server:", response)
+            text=f"{result['sellerPhoneNumber']}{result['from']}{result['to']}"
+            if process_message_time(text):
+                if chek_data(result):
+                    status, response = await post_to_api(result)
+                    if status == 200:
+                        print("✅ Yuborildi:", result.get("sellerPhoneNumber", "no-phone"))
+                        print("Server:", response)
+                    else:
+                        print(f"❌ API Xatosi [{status}]: {response}")
                 else:
-                    print(f"❌ API Xatosi [{status}]: {response}")
-            except Exception as e:
-                print("❌ API yuborishda xatolik:", e)
-            #
-            # Matnni formatlash va guruhlarga yuborish
-            result_text = "\n".join(f"{k}: {v}" for k, v in result.items())
-            # print(result_text)
-            try:
+                   print('\n\n\nMalumot yetarli emas\n\n\n')
+            else:
+                print('\n\n\nTakrorlangan xabar\n\n\n')
+        except Exception as e:
+            print("❌ API yuborishda xatolik:", e)
+        #
+        # Matnni formatlash va guruhlarga yuborish
+        result_text = "\n".join(f"{k}: {v}" for k, v in result.items())
+        # print(result_text)
+        try:
 
-                await asyncio.gather(
+            await asyncio.gather(
 
-                    client.send_message(target_group, result_text),
-                    client.send_message(target_group2, message.message)
-                )
-                print("muvafaqiyatli jonatildi")
-            except Exception as e:
-                print("❌ Telegramga yuborishda xatolik:", e)
-    else:
-        print("Takrorlangan xabar")
+                client.send_message(target_group, result_text),
+                client.send_message(target_group2, message.message)
+            )
+            print("muvafaqiyatli jonatildi")
+
+        except Exception as e:
+            print("❌ Telegramga yuborishda xatolik:", e)
 
 
 

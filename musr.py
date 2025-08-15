@@ -1,24 +1,35 @@
-def funcsion(text,entity_pairs):
-    entities=[]
-    for value,label in entity_pairs.items():
-        print(label)
-        start= text.find(label)
-        if start !=-1:
-            end=start +len(label)
-            entities.append((start,end,value))
-        else:
-            print("value not found")
-    return {"text": text, "entities": entities}
+text1="""Гулистондан - Наманганга 
+Нужен тент площадка срочно
+889260200"""
+
+text2="""Гулистондан - Наманганга 
+Нужен тент площадка срочно
+889260200"""
+
+text3="""
+🇷🇺 КИРОВ МУРАШИ
+🇺🇿 УЗБ ТОШКЕНТ
+ГРУЗ: ДСП МДФ
+🚛 ТЕНТ-ФУРА
+ОПЛАТА НАЛ
++998917503699
+"""
+
+text_list=[text1,text2,text3]
+
+from  bot.forward import get_message_hash,process_message_time
 
 
-text="""Sirdaryo - G'ijduvon 
-25tonna 
-Tent fura 
-330631013
-331421013"""
 
-entity_pairs={'FROM':'Sirdaryo','TO':"G'ijduvon"}
+for i in text_list:
 
-converted = funcsion(text,entity_pairs)
-print(converted)
+    if process_message_time(i):
+        print("bir")
+
+    else:
+        print("ikki")
+
+
+
+
 

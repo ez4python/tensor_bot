@@ -1,6 +1,6 @@
 import spacy
 
-nlp = spacy.load(r"/media/tensor/Windows/Users/User/PycharmProjects/Logistika/apps/single_multiple_classifier")
+nlp = spacy.load(r"C:\Users\Javoxir\PycharmProjects\tensor_bot\apps\single_multiple_classifier")
 
 def detector_block(text):
     doc = nlp(text)

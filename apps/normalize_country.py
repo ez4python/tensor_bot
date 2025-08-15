@@ -5,7 +5,7 @@ from rapidfuzz import process, fuzz
 from apps.normalize_text import clean_and_capitalize
 
 # Fayldan shaharlar lug'atini o'qib olish
-with open(r"/media/tensor/Windows/Users/User/PycharmProjects/Logistika/apps/regions.json", "r", encoding="utf8") as f:
+with open(r"C:\Users\Javoxir\PycharmProjects\tensor_bot\apps\regions.json", "r", encoding="utf8") as f:
     city_to_region = json.load(f)
 
 # Barcha variantlarni normalize qilib, lug'atni tayyorlab qo'yamiz

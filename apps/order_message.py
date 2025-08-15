@@ -10,17 +10,6 @@ from apps.separateblock import smart_split_blocks
 
 def chek_data(text):
     if text.get('from') and text.get('to') and text.get('sellerPhoneNumber'):
-
-        from_country = text['from'].split(',')
-        to_country = text['to'].split(',')
-        if len(to_country) >= 1:
-            to_country = to_country[:2]
-            text['to'] = ",".join(to_country)
-
-        if len(from_country) >= 1:
-            from_country = from_country[:2]
-            text['from'] = ",".join(from_country)
-
         return text
     return None
 

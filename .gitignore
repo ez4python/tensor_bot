@@ -1,4 +1,5 @@
-model
+model/
+bot/__pycache__/
 output
 segment_block
 test
