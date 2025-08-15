@@ -9,20 +9,17 @@ from apps.separateblock import smart_split_blocks
 
 
 def chek_data(text):
-
-
     if text.get('from') and text.get('to') and text.get('sellerPhoneNumber'):
 
         from_country = text['from'].split(',')
         to_country = text['to'].split(',')
-        if len(to_country)>=1 :
-            to_country=to_country[:2]
+        if len(to_country) >= 1:
+            to_country = to_country[:2]
             text['to'] = ",".join(to_country)
 
-        if len(from_country)>=1 :
-            from_country=from_country[:2]
-            text['from']=",".join(from_country)
-
+        if len(from_country) >= 1:
+            from_country = from_country[:2]
+            text['from'] = ",".join(from_country)
 
         return text
     return None
@@ -49,7 +46,7 @@ def cargo_name_normalize(text):
 
 def process_block(block, user, msg_id, username):
     blok_data = get_message(block)
-    blok_data=chek_data(blok_data)
+    blok_data = chek_data(blok_data)
     if not blok_data:
         return None
 
@@ -60,8 +57,8 @@ def process_block(block, user, msg_id, username):
     blok_data["fromLatin"] = change_language(blok_data["from"])
     blok_data["toLatin"] = change_language(blok_data["to"])
     blok_data["sellerPhoneNumber"] = normalize_phone_number_list(blok_data["sellerPhoneNumber"])
-    blok_data["tg_username"] = username # f"https://t.me/{username}"
-    blok_data["cargoName"]=cargo_name_normalize(blok_data["cargoName"])
+    blok_data["tg_username"] = username  # f"https://t.me/{username}"
+    blok_data["cargoName"] = cargo_name_normalize(blok_data["cargoName"])
     blok_data["cargoNameLatin"] = change_language(blok_data["cargoName"])
     blok_data['weight'] = normalize(blok_data["weight"])
     if blok_data.get("vehicleType"):
@@ -74,11 +71,11 @@ def process_block(block, user, msg_id, username):
 def ordered_message(text, user, msg_id, username):
     data_type = detector_block(text)
 
-    result =[]
+    result = []
 
     if data_type == "SINGLE":
         res = get_message(text)
-        res=chek_data(res)
+        res = chek_data(res)
         if not res:
             return None
         elif res:
@@ -89,14 +86,14 @@ def ordered_message(text, user, msg_id, username):
             res["fromLatin"] = change_language(res["from"])
             res["toLatin"] = change_language(res["to"])
             res["cargoName"] = cargo_name_normalize(res["cargoName"])
-            res["cargoNameLatin"]=change_language(res["cargoName"])
+            res["cargoNameLatin"] = change_language(res["cargoName"])
             res["sellerPhoneNumber"] = normalize_phone_number_list(res["sellerPhoneNumber"])
-            res['weight']=normalize(res["weight"])
+            res['weight'] = normalize(res["weight"])
             if res.get("vehicleType"):
                 res["vehicleType"] = find_truck_type(res["vehicleType"])
                 res["vehicleTypeLatin"] = change_language(res["vehicleType"])
             res["messageId"] = msg_id
-            res["tg_username"] = username # f"https://t.me/{username}"
+            res["tg_username"] = username  # f"https://t.me/{username}"
             result.append(res)
     else:
         blocks = smart_split_blocks(text)
@@ -117,10 +114,11 @@ def normalize(text):
     if text is None:
         return ""
     elif "," in text:
-        text=text.split(',')
+        text = text.split(',')
         return text[0]
     else:
         return text
+
 
 def change_language(data):
     rus_to_latin = {
@@ -147,6 +145,9 @@ def change_language(data):
         'У': 'U', 'у': 'u',
         'Ф': 'F', 'ф': 'f',
         'Х': 'X', 'х': 'x',
+        'Қ': 'Q', 'қ': 'q',
+        'Ғ': 'G’', 'ғ': 'g’',
+        'Ҳ': 'H', 'ҳ': 'h',
         'Ц': 'Ts', 'ц': 'ts',
         'Ч': 'Ch', 'ч': 'ch',
         'Ш': 'Sh', 'ш': 'sh',
@@ -157,8 +158,8 @@ def change_language(data):
         'Э': 'E', 'э': 'e',
         'Ю': 'Yu', 'ю': 'yu',
         'Я': 'Ya', 'я': 'ya',
-        ',':',','.':'.','-':'-',
-        ' ':' '
+        ',': ',', '.': '.', '-': '-',
+        ' ': ' '
     }
     change_data = ""
     for x in data:
@@ -166,11 +167,6 @@ def change_language(data):
             change_data += rus_to_latin.get(x, x)
 
     return change_data
-
-
-
-
-
 
 # text="""
 #
@@ -186,4 +182,3 @@ def change_language(data):
 #
 #
 # print(process_block(text, "javoxir", "999","user"))
-
